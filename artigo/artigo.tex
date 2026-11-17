@@ -32,9 +32,9 @@ accidents from 2021 to 2025 and a temporal train/validation/test split, we train
 logistic regression and random forest models on three feature sets: context
 only, context plus accident dynamics, and a deliberately leaky set containing
 outcome-derived columns. On the 2025 test year, context alone reaches a PR-AUC
-of 0.395 against a 0.283 no-skill baseline, accident dynamics raise it to 0.530,
+of 0.395 against a 0.283 no-skill baseline, accident dynamics raise it to 0.528,
 and leaked columns raise it to 0.97--0.99. The context-only model relies mostly
-on road type and location and flags 99.8\% of accidents in the state of
+on road type and location and flags 99.0\% of accidents in the state of
 Piau\'i as severe. We discuss the implications for model evaluation and for
 operational use.
 \end{abstract}
@@ -119,8 +119,7 @@ death or one seriously injured person, and \emph{non-severe} otherwise. The
 positive class accounts for 28.3\% of the data, a share that stays between
 28.1\% and 28.5\% in every year.
 
-Quality checks found no duplicated rows or identifiers and no inconsistency
-among the victim counts. The only missing values are in the official
+Quality checks found no duplicated rows or identifiers, complete coverage of the five years, and no inconsistency among the victim counts that define the label. Two problems were found in other columns: in 5.4\% of the accidents the number of people involved differs from the sum of its categories, which affects only feature sets B and C, and about 20\% of the records have a time on the exact hour, against 1.7\% expected, so the recorded time is often an estimate. The only missing values are in the official
 classification (5 rows) and in administrative columns that are not used, so no
 row was discarded. Categories such as ``Ignored'' and ``Not informed'' were
 kept as categories. One change in how the form is filled was identified: the
@@ -129,7 +128,7 @@ about 10\% in 2021--2022 to about 25\% from 2023 onwards.
 
 \subsection{Preprocessing and feature sets}
 
-Row-wise transformations were applied before splitting: decimal conversion of
+To keep validation and test data out of every decision, the exploratory analysis that guided feature design used the training years only. Row-wise transformations were applied before splitting: decimal conversion of
 kilometre and coordinates; hour of day encoded also as sine and cosine;
 month and a weekend indicator; the multi-valued road-layout field expanded into
 12 binary indicators; and an urban-area indicator. Transformations that learn
@@ -184,8 +183,7 @@ are reproducible from the public notebook.
 Table~\ref{tab:main} shows the results for feature set A. The random forest
 reaches a PR-AUC of 0.395 against the no-skill value of 0.283, and a ROC-AUC of
 0.627. There is real but limited information in the context. At the
-F1-maximising threshold the model recovers 81.6\% of the severe accidents, but
-does so by flagging 70.8\% of all accidents; its F1 of 0.465 is only slightly
+F1-maximising threshold the model recovers 78.3\% of the severe accidents, but does so by flagging 67.0\% of all accidents; its F1 of 0.465 is only slightly
 above the 0.441 obtained by labelling every accident as severe. Used as a
 ranking, the gain is modest: among the 10\% of accidents with the highest
 predicted risk, 46.9\% are severe, 1.7 times the base rate.
@@ -201,7 +199,7 @@ Model & PR-AUC & ROC-AUC & F1 & Precision & Recall & Accuracy \\
 Always non-severe   & 0.283 & 0.500 & 0.000 & 0.000 & 0.000 & 0.717 \\
 Always severe       & 0.283 & 0.500 & 0.441 & 0.283 & 1.000 & 0.283 \\
 Logistic regression & 0.386 & 0.620 & 0.460 & 0.321 & 0.810 & 0.463 \\
-Random forest       & 0.395 & 0.627 & 0.465 & 0.325 & 0.816 & 0.470 \\
+Random forest       & 0.395 & 0.627 & 0.465 & 0.331 & 0.783 & 0.491 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -219,11 +217,8 @@ occurrence-level data.
 \subsection{Leakage audit}
 
 Figure~\ref{fig:sets} compares the three feature sets. Adding accident
-dynamics (set B) raises the random forest PR-AUC from 0.395 to 0.530 and the
-ROC-AUC from 0.627 to 0.715: knowing \emph{how} the accident happened says more
-about severity than all context features together. This is consistent with the
-exploratory analysis, in which 68.0\% of pedestrian collisions and 63.1\% of
-head-on collisions are severe, against 33.7\% on single carriageways, the
+dynamics (set B) raises the random forest PR-AUC from 0.395 to 0.528 and the ROC-AUC from 0.627 to 0.714: knowing \emph{how} the accident happened says more
+about severity than all context features together. This is consistent with the exploratory analysis of the training years, in which 68.0\% of pedestrian collisions and 62.8\% of head-on collisions are severe, against 33.7\% on single carriageways, the
 road-type category with the highest share. These attributes, however, only exist after the
 accident.
 
@@ -254,36 +249,32 @@ because targets, regions and periods differ.
 \subsection{Robustness}
 
 Replacing the temporal split by a stratified random split over the same rows
-changed PR-AUC by at most 0.006 (0.395 versus 0.401 for the random forest). We
+changed PR-AUC by at most 0.005 (0.395 versus 0.400 for the random forest). We
 expected the random split to inflate the results, given the change in how
 records are filled; the data do not support this hypothesis, and we report it
 as a negative result. The relation between context and severity was stable from
 2021 to 2025. Across three seeds, the standard deviation of the random forest
-PR-AUC was 0.0004. The 95\% bootstrap interval for the PR-AUC difference between
+PR-AUC was 0.0001. The 95\% bootstrap interval for the PR-AUC difference between
 random forest and logistic regression is 0.007 to 0.012: the random forest is
 consistently better, but by a margin of little practical relevance, while the
 logistic regression trains in a few seconds.
 
 \subsection{Error analysis and regional bias}
 
-The share of severe accidents differs strongly across the country, from about
-19\% in S\~ao Paulo to more than 40\% in Piau\'i, Par\'a and Maranh\~ao
+In the training years, the share of severe accidents differs strongly across the country, from about 19\% in S\~ao Paulo to more than 40\% in Piau\'i, Par\'a and Maranh\~ao
 (Figure~\ref{fig:uf}). Permutation importance on the validation year shows that
-the context-only random forest relies mostly on road type (a PR-AUC drop of
-0.028 when shuffled) and on location features (0.018 for latitude), while
+the context-only random forest relies mostly on road type (a PR-AUC drop of 0.027 when shuffled) and on location features (0.019 for latitude), while
 weather and road layout have an effect close to zero.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{figuras/fig_uf.pdf}
-\caption{Share of severe accidents by federative unit, 2021--2025.}
+\caption{Share of severe accidents by federative unit in the training years (2021--2023).}
 \label{fig:uf}
 \end{figure}
 
 As a consequence, the model behaves very differently across regions
-(Figure~\ref{fig:regions}). With a single national threshold it flags 99.8\% of
-the accidents in Piau\'i, 93.6\% in the North and 91.0\% in the Northeast as
-severe, against 57.9\% in the Southeast and 61.8\% in the South. The recall
+(Figure~\ref{fig:regions}). With a single national threshold it flags 99.0\% of the accidents in Piau\'i, 90.6\% in the North and 88.8\% in the Northeast as severe, against 54.4\% in the Southeast and 56.1\% in the South. The recall
 close to 100\% in Piau\'i is therefore not evidence of good performance. Within
 each region the PR-AUC is only 1.2 to 1.4 times the regional base rate, and the
 ROC-AUC drops to 0.58 in the Central-West: part of the national performance
@@ -299,11 +290,8 @@ national values.}
 \end{figure}
 
 Crossing the errors with the accident type, which the context-only model does
-not see, shows what it misses. It detects 95\% of the severe head-on collisions
-but only 73\% of the severe rear-end collisions and 68\% of the severe
-same-direction side collisions. Among the severe accidents that were missed,
-only 12.7\% happened on single carriageways (66.6\% among the detected ones) and
-13.9\% at night (45.0\%). The model has essentially learned the pattern ``single
+not see, shows what it misses. It detects 94\% of the severe head-on collisions but only 69\% of the severe rear-end collisions and 63\% of the severe same-direction side collisions. Among the severe accidents that were missed,
+only 14.0\% happened on single carriageways (68.4\% among the detected ones) and 16.1\% at night (45.7\%). The model has essentially learned the pattern ``single
 carriageway, at night, outside urban areas''; severe accidents outside this
 pattern are the ones it loses.
 
@@ -311,21 +299,19 @@ pattern are the ones it loses.
 
 The dataset only contains accidents that happened and were recorded, so the
 model estimates severity given an accident, not the chance of one. This
-explains a counter-intuitive finding: accidents under rain have a lower share of
-severe outcomes (24.1\%) than under clear sky (29.4\%), probably because rain
+explains a counter-intuitive finding in the training years: accidents under rain have a lower share of
+severe outcomes (24.3\%) than under clear sky (29.5\%), probably because rain
 produces many minor accidents. Under-reporting of minor accidents may differ
 across regions, in which case part of the regional difference would be an
 artefact of data collection that the model would reproduce. The label merges
 deaths and serious injuries, and the ``seriously injured'' status is assigned
-by the officer at the scene. Only two algorithms and a small hyperparameter
-grid were evaluated. Finally, the predicted probabilities are not calibrated:
-among accidents scored around 0.45, only 25\% are severe, a consequence of class
+by the officer at the scene. Only two algorithms and a small hyperparameter grid were evaluated, and the tested model was trained on 2021--2023 only, without refitting on the validation year. Finally, the predicted probabilities are not calibrated:
+among accidents scored around 0.45, only 26\% are severe, a consequence of class
 weighting.
 
 For these reasons the context-only model should not support decisions about
 individual occurrences: it would prioritise almost every accident in the North
-and Northeast and miss about 28\% of the severe accidents in the South and
-Southeast. A defensible use is aggregate, indicating combinations of road type,
+and Northeast and miss about one third of the severe accidents in the South and Southeast. A defensible use is aggregate, indicating combinations of road type,
 stretch and time of day with a higher share of severe outcomes, always together
 with accident counts.
 
@@ -334,8 +320,7 @@ with accident counts.
 We audited where the predictive signal comes from when classifying accident
 severity on PRF open data. With 342,670 accidents from 2021 to 2025 and a
 temporal evaluation, context alone proved weakly predictive (PR-AUC 0.395
-against 0.283 without a model); information about the accident dynamics added
-substantially (0.530); and outcome-derived columns produced near-perfect and
+against 0.283 without a model); information about the accident dynamics added substantially (0.528); and outcome-derived columns produced near-perfect and
 practically useless scores (0.97--0.99). We learned that, on this dataset, the
 choice of features matters far more than the choice of algorithm or split
 strategy, that accuracy hides the problem, and that a model with a reasonable
