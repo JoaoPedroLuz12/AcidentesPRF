@@ -33,7 +33,7 @@ forest models are trained on three nested feature sets: context only, context
 plus accident dynamics, and a deliberately leaky set with outcome-derived
 columns. Context alone reaches a PR-AUC of 0.395 against a no-skill value of
 0.283; accident dynamics raise it to 0.528; leaked columns raise it to
-0.97--0.99. The context-only model relies mostly on road type and location and
+0.965--0.994. The context-only model relies mostly on road type and location and
 flags 99.0\% of the accidents in Piau\'i as severe, against 54.4\% in the
 Southeast.
 \end{abstract}
@@ -371,7 +371,7 @@ severity on PRF open data. With 342,670 accidents from 2021 to 2025 and a
 temporal evaluation, context alone proved weakly predictive (PR-AUC 0.395
 against 0.283 without a model); information about the accident dynamics added
 substantially (0.528); and outcome-derived columns produced near-perfect and
-practically useless scores (0.97--0.99). Answering the research question: on
+practically useless scores (0.965--0.994). Answering the research question: on
 this dataset the choice of features matters far more than the choice of
 algorithm or split strategy, accuracy hides the problem, and a model with a
 reasonable national average can behave as an ``always severe'' rule in a whole
