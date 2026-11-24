@@ -74,17 +74,23 @@ helps to anticipate severity, not which factor causes it.
 
 % Gabardo et al.: texto completo inacessivel (Springer); a descricao abaixo se
 % limita ao tema, aos dados e aos metodos, sem numeros de resultado.
-% Mafort e Kappel e Fuhr et al.: descricao limitada ao tema, aos dados e aos
-% metodos, sem numeros de resultado, pois os textos nao foram conferidos a tempo.
+% Mafort e Kappel: conferido no texto original (REIC 2025, v. 23, n. 1).
+% Fuhr et al.: descricao limitada ao tema, aos dados e aos metodos, sem numeros
+% de resultado, pois o texto nao foi conferido a tempo.
 
 \textbf{Severity prediction on PRF data.} Gabardo et al. \cite{gabardo2025}
 classify fatal outcomes in accidents on federal highways of the Brazilian
 southern region using PRF data from 2021 to 2024. They compare random forest,
 $k$-nearest neighbours and a multilayer perceptron, balance the classes with
 SMOTE and use SHAP to analyse feature influence. Mafort and Kappel
-\cite{mafort2025} study accidents on federal highways in the state of Rio de
-Janeiro from 2020 to 2023, comparing several classifiers to predict accident
-severity.
+\cite{mafort2025} use the same definition of severity adopted here (at least
+one death or one seriously injured person) for 18,104 accidents on federal
+highways in the state of Rio de Janeiro from 2020 to 2023. They compare seven
+classifiers with a random 75/25 split, cross-validation and undersampling;
+logistic regression performs best, with 73.85\% accuracy, a ROC-AUC of 69.77\%
+and a macro F1 of 62.75\%. They remove the accident cause and the victim counts
+to avoid leakage, but keep the accident type, which LIME points out as the most
+influential predictor.
 
 \textbf{Data quality.} F\"uhr et al. \cite{fuhr2025} focus on accidents on the
 BR-101 in Santa Catarina. They identify inconsistencies in PRF records and
@@ -105,7 +111,9 @@ Our work differs from the PRF studies in three ways: (i) it covers the whole
 country, which allows checking whether a model behaves equally across regions;
 (ii) it uses a temporal split instead of a random one; and (iii) its main
 contribution is a comparison between feature sets defined by the moment at
-which each feature becomes available, rather than a single model.
+which each feature becomes available, rather than a single model. In
+particular, the accident type, kept as a feature by Mafort and Kappel, is also
+known only after the accident.
 
 \section{Methodology}
 
@@ -278,9 +286,13 @@ The practical implication is that a score on this dataset cannot be
 interpreted without knowing which columns were used and when each becomes
 available: on the same data and with the same models, PR-AUC ranges from 0.40
 to 0.99 depending only on the feature set. Our set B is the closest to the
-feature sets of the related work; a direct numerical comparison with those
-studies is not possible, because targets, regions, periods and feature sets
-differ.
+feature set of Mafort and Kappel \cite{mafort2025}, who use the same target and
+also include the accident type: with it, our logistic regression reaches a
+ROC-AUC of 0.713, close to the 0.698 they report for Rio de Janeiro, while
+context alone (set A) reaches 0.620. The comparison is approximate, because
+region, period, split and the inclusion of the accident cause differ, but it
+suggests that their result also depends on information that only exists after
+the accident.
 
 \subsection{Robustness}
 
