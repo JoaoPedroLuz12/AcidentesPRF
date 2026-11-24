@@ -48,7 +48,7 @@ preventive enforcement matter most, which makes accident severity a natural
 target for machine learning (ML).
 
 Several recent Brazilian studies train classifiers on PRF data to predict
-severity \cite{gabardo2025,mafort2025,fuhr2025}. Their feature sets usually mix
+severity \cite{gabardo2025,mafort2025}. Their feature sets usually mix
 attributes that are known before or at the moment of an accident (location,
 time, weather, road layout) with attributes that only exist after someone has
 described the event (accident type, cause, number of vehicles and people). The
@@ -75,8 +75,7 @@ helps to anticipate severity, not which factor causes it.
 % Gabardo et al.: texto completo inacessivel (Springer); a descricao abaixo se
 % limita ao tema, aos dados e aos metodos, sem numeros de resultado.
 % Mafort e Kappel: conferido no texto original (REIC 2025, v. 23, n. 1).
-% Fuhr et al.: descricao limitada ao tema, aos dados e aos metodos, sem numeros
-% de resultado, pois o texto nao foi conferido a tempo.
+% Fuhr et al.: conferido no texto original (ERBD 2025).
 
 \textbf{Severity prediction on PRF data.} Gabardo et al. \cite{gabardo2025}
 classify fatal outcomes in accidents on federal highways of the Brazilian
@@ -92,11 +91,16 @@ and a macro F1 of 62.75\%. They remove the accident cause and the victim counts
 to avoid leakage, but keep the accident type, which LIME points out as the most
 influential predictor.
 
-\textbf{Data quality.} F\"uhr et al. \cite{fuhr2025} focus on accidents on the
-BR-101 in Santa Catarina. They identify inconsistencies in PRF records and
-compare random forest, support vector machine and multilayer perceptron models
-trained on the original and on the improved data, showing that the preparation
-of these records affects the results.
+\textbf{Data quality.} F\"uhr et al. \cite{fuhr2025} address a different
+task, the prediction of accident \emph{occurrence}, on the BR-101 in Santa
+Catarina (km 100 to 239, 2018--2023), using hour and 100-metre road segments
+without accidents as negative examples. They find that 68.46\% of the accidents
+recorded on the same 100-metre segment have at least one divergent road
+attribute (road type, road layout or land use), correct these attributes with
+data from the national transport agencies (ANTT and DNIT), and show that the
+correction significantly improves random forest and support vector machine
+models (F1 from 0.710 to 0.749 and from 0.714 to 0.760), while the multilayer
+perceptron does not change significantly.
 
 \textbf{Leakage and evaluation on imbalanced data.} Kaufman et al.
 \cite{kaufman2012} define leakage as the use of information that would not be
@@ -366,7 +370,10 @@ reproduce. (iv) The label merges deaths and serious injuries, and the
 two algorithms and a small hyperparameter grid were evaluated, and the tested
 model was not refitted on the validation year. (vi) The predicted
 probabilities are not calibrated: among accidents scored around 0.45, only
-26\% are severe, a consequence of class weighting.
+26\% are severe, a consequence of class weighting. (vii) Road type, the feature
+on which the context model relies most, is often recorded inconsistently for
+the same stretch of road \cite{fuhr2025}, which adds noise to the most
+informative features.
 
 Regarding risks, the context-only model must not support decisions about
 individual occurrences: it would prioritise almost every accident in the North
@@ -416,9 +423,10 @@ drafting and revising this paper in English. The author chose the application
 area, approved the problem formulation and the experimental design, and
 directed the analyses. The outputs were verified by executing the notebook
 end-to-end in Google Colab, by checking every number in this paper against the
-notebook outputs, and by testing the data download links.
-% ACRESCENTAR depois de fazer: "every reference was checked against its
-% original source" e "the author reviewed all text and results".
+notebook outputs, and by testing the data download links. The descriptions of related work
+were checked against the original texts, except for Gabardo et al., whose full
+text was not accessible.
+% ACRESCENTAR depois de fazer: "the author reviewed all text and results".
 The author is responsible for the content.
 
 \bibliographystyle{sbc}
