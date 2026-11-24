@@ -200,11 +200,13 @@ class; (ii) a baseline that always predicts the severe class; (iii) a logistic
 regression; and (iv) a random forest \cite{breiman2001}, the algorithm most
 used in the related work, which can capture interactions among features. Both
 learned models use class weights inversely proportional to class frequency
-instead of synthetic oversampling. A small grid search on set A selected
-$C = 0.1$ for the logistic regression and, for the random forest, 100 trees
-with unlimited depth, at least 20 samples per leaf and each tree trained on
-half of the training rows. The same hyperparameters were reused for sets B and
-C, so that only the features change between scenarios.
+instead of synthetic oversampling. A small grid search on set A, scored by
+validation PR-AUC, tested $C \in \{0.01, 0.1, 1\}$ for the logistic regression
+and, for a random forest of 100 trees with each tree trained on half of the
+training rows, a maximum depth of 12 or unlimited and a minimum of 20 or 50
+samples per leaf. It selected $C = 0.1$ and an unlimited depth with at least 20
+samples per leaf. The same hyperparameters were reused for sets B and C, so
+that only the features change between scenarios.
 
 Since only 28.3\% of the test accidents are severe, accuracy would be
 misleading. The main metric is the area under the precision--recall curve
@@ -215,6 +217,9 @@ intervals are obtained by bootstrapping the test set (500 resamples).
 Robustness is assessed by repeating the experiment with a stratified random
 split over the same rows and by training the random forest with three seeds.
 Feature relevance is measured by permutation importance on the validation year.
+All random steps use a fixed seed. The experiments ran in Python 3.13 with
+scikit-learn 1.6.1 and pandas 2.2.3, the versions of Google Colab at the time,
+and the complete notebook runs in about 13 minutes on the free tier of Colab.
 
 \section{Results and Discussion}
 
