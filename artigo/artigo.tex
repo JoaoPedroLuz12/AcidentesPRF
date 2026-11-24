@@ -74,8 +74,8 @@ helps to anticipate severity, not which factor causes it.
 
 % Gabardo et al.: texto completo inacessivel (Springer); a descricao abaixo se
 % limita ao tema, aos dados e aos metodos, sem numeros de resultado.
-% CONFERIR NOS ORIGINAIS: os detalhes atribuidos a Mafort e Kappel e a Fuhr et
-% al. vieram de resumos e nao da leitura integral dos artigos.
+% Mafort e Kappel e Fuhr et al.: descricao limitada ao tema, aos dados e aos
+% metodos, sem numeros de resultado, pois os textos nao foram conferidos a tempo.
 
 \textbf{Severity prediction on PRF data.} Gabardo et al. \cite{gabardo2025}
 classify fatal outcomes in accidents on federal highways of the Brazilian
@@ -83,9 +83,8 @@ southern region using PRF data from 2021 to 2024. They compare random forest,
 $k$-nearest neighbours and a multilayer perceptron, balance the classes with
 SMOTE and use SHAP to analyse feature influence. Mafort and Kappel
 \cite{mafort2025} study accidents on federal highways in the state of Rio de
-Janeiro from 2020 to 2023 with several classifiers and report a random forest
-with 86\% accuracy and an F1-score of 59\% when vehicle and environment
-attributes are used.
+Janeiro from 2020 to 2023, comparing several classifiers to predict accident
+severity.
 
 \textbf{Data quality.} F\"uhr et al. \cite{fuhr2025} focus on accidents on the
 BR-101 in Santa Catarina. They identify inconsistencies in PRF records and
@@ -99,8 +98,8 @@ legitimately available at prediction time, and Kapoor and Narayanan
 \cite{kapoor2023} show that it is a widespread cause of over-optimistic results
 in applied ML. Saito and Rehmsmeier \cite{saito2015} show that the
 precision--recall curve is more informative than the ROC curve when the
-positive class is rare. A pair such as 86\% accuracy and 59\% F1 illustrates
-the point: on an imbalanced target, accuracy alone says little.
+positive class is rare; on an imbalanced target such as accident severity,
+accuracy alone says little.
 
 Our work differs from the PRF studies in three ways: (i) it covers the whole
 country, which allows checking whether a model behaves equally across regions;
@@ -278,11 +277,10 @@ the features.
 The practical implication is that a score on this dataset cannot be
 interpreted without knowing which columns were used and when each becomes
 available: on the same data and with the same models, PR-AUC ranges from 0.40
-to 0.99 depending only on the feature set. Our set B, the closest to the
-feature sets of the related work, yields an F1 of 0.51, the same order of
-magnitude as the 59\% reported by Mafort and Kappel \cite{mafort2025}. A
-direct numerical comparison is not possible, because targets, regions and
-periods differ.
+to 0.99 depending only on the feature set. Our set B is the closest to the
+feature sets of the related work; a direct numerical comparison with those
+studies is not possible, because targets, regions, periods and feature sets
+differ.
 
 \subsection{Robustness}
 
