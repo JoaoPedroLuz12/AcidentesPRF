@@ -1,0 +1,49 @@
+% Reproducao local da aparencia do modelo de artigos da SBC, feita a partir de
+% um PDF de exemplo, apenas para gerar a previa. NAO e o arquivo oficial.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sbc-template}[2026/11/23 reproducao local do estilo SBC]
+
+\RequirePackage{times}
+\RequirePackage[a4paper,top=3.5cm,bottom=2.5cm,left=3cm,right=3cm]{geometry}
+\RequirePackage[font={small,sf,bf},labelsep=period,format=hang,
+  singlelinecheck=true,margin=1cm,skip=6pt]{caption}
+
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{6pt}
+\pagestyle{empty}
+
+% Titulos numerados como "1. Introduction" e "3.1. Data"
+\renewcommand\@seccntformat[1]{\csname the#1\endcsname.\hspace{0.5em}}
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-12pt}{4pt}{\fontsize{13}{15}\selectfont\bfseries}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {-10pt}{2pt}{\normalsize\bfseries}}
+
+% Cabecalho do artigo
+\newcounter{sbc@inst}
+\newcommand{\inst}[1]{\textsuperscript{#1}}
+\newcommand{\email}[1]{\\[6pt]{\small\texttt{#1}}}
+\newcommand{\nextinstitute}{\\[6pt]\stepcounter{sbc@inst}\textsuperscript{\thesbc@inst}}
+\newcommand{\address}[1]{\gdef\@address{\setcounter{sbc@inst}{1}\textsuperscript{1}#1}}
+\renewcommand{\maketitle}{%
+  \par\begin{center}
+  {\fontsize{16}{19}\selectfont\bfseries\@title\par}\vspace{10pt}
+  {\bfseries\@author\par}\vspace{10pt}
+  {\@address\par}
+  \end{center}\vspace{4pt}}
+
+% Resumo em italico, recuado 0,8 cm dos dois lados
+\renewenvironment{abstract}%
+  {\begin{list}{}{\leftmargin=0.8cm\rightmargin=0.8cm\topsep=0pt}%
+   \item[]\itshape\textbf{Abstract.}\ }%
+  {\end{list}}
+
+% Referencias: sem numero, com recuo deslocado
+\renewcommand{\refname}{References}
+\renewenvironment{thebibliography}[1]{%
+  \section*{\refname}%
+  \list{}{\leftmargin 0.5cm \itemindent -0.5cm \labelwidth\z@
+          \labelsep\z@ \itemsep 4pt \parsep\z@}%
+  \def\@lbibitem[##1]##2{\item[]\if@filesw{\let\protect\noexpand
+     \immediate\write\@auxout{\string\bibcite{##2}{##1}}}\fi\ignorespaces}%
+  \sloppy}{\endlist}
