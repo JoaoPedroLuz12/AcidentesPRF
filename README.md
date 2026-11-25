@@ -23,7 +23,7 @@ No Colab, use **Ambiente de execução → Executar tudo**. O notebook baixa os 
 | `notebook/acidentes_prf_gravidade.ipynb` | Código e relatório técnico: dados, análise exploratória, modelos, avaliação, robustez, análise de erros e conclusões |
 | `artigo/artigo.tex` e `artigo/refs.bib` | Resumo expandido em inglês, no formato de artigos da SBC |
 | `artigo/figuras/` | Figuras do artigo, geradas pelo próprio notebook |
-| `artigo/artigo_previa.pdf` | Prévia do artigo compilado |
+| `artigo/artigo.pdf` | Artigo final, compilado no Overleaf com o modelo oficial da SBC |
 
 ## Dados
 
